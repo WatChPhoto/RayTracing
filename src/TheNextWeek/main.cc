@@ -369,24 +369,29 @@ void final_scene(int image_width, int samples_per_pixel, int max_depth) {
     auto rmat = make_shared<lambertian>(make_shared<image_texture>("roof1.jpg"));//("circles.jpg"));
     point3 V_cone = point3(0,1,-1);
     V_cone = unit_vector(V_cone);
-    world.add(make_shared<cone>(point3(200, 300, 300),V_cone, 100.0, 200.0, sphere_material));
+    world.add(make_shared<cone>(point3(200, 300, 300),V_cone, 100.0, interval(50.0, 200.0), sphere_material));
     
     auto pertext = make_shared<noise_texture>(0.2);
     //world.add(make_shared<sphere>(point3(220,280,300), 80, make_shared<lambertian>(pertext)));
 
-    hittable_list boxes2;
-    auto white = make_shared<lambertian>(color(.73, .73, .73));
-    int ns = 1000;
-    for (int j = 0; j < ns; j++) {
-        boxes2.add(make_shared<sphere>(point3::random(0,165), 10, white));
-    }
 
-    world.add(make_shared<translate>(
-        make_shared<rotate_y>(
-            make_shared<bvh_node>(boxes2), 15),
-            vec3(-100,270,395)
-        )
-    );
+
+
+
+
+    // hittable_list boxes2;
+    // auto white = make_shared<lambertian>(color(.73, .73, .73));
+    // int ns = 1000;
+    // for (int j = 0; j < ns; j++) {
+    //     boxes2.add(make_shared<sphere>(point3::random(0,165), 10, white));
+    // }
+
+    // world.add(make_shared<translate>(
+    //     make_shared<rotate_y>(
+    //         make_shared<bvh_node>(boxes2), 15),
+    //         vec3(-100,270,395)
+    //     )
+    // );
 
     camera cam;
 
@@ -406,9 +411,67 @@ void final_scene(int image_width, int samples_per_pixel, int max_depth) {
     cam.render(world);
 }
 
+void cone_test_scene() {
+
+
+
+    hittable_list world;
+
+    // light source
+
+    auto light = make_shared<diffuse_light>(color(7, 7, 7));
+    world.add(make_shared<quad>(point3(123,554,147), vec3(300,0,0), vec3(0,0,265), light));
+
+    world.add(make_shared<quad>(point3(478, 500, -600), vec3(300,0,0), vec3(0,0,265), light)); //above camera
+
+    // cones
+
+    point3 V_cone = point3(0,1,-0.75);
+    V_cone = unit_vector(V_cone);
+
+    auto cone1_material = make_shared<lambertian>(color(0.9, 0.4, 0.2));
+    world.add(make_shared<cone>(point3(400, 200, 300),V_cone, 75.0, interval(0.0, 200.0), cone1_material));
+
+    auto cone2_material = make_shared<metal>(color(0.9, 0.4, 0.2), 0);
+    world.add(make_shared<cone>(point3(200, 200, 300),V_cone, 75.0, interval(0.0, 200.0), cone2_material));
+
+    auto cone3_material = make_shared<dielectric>(1.5);
+    world.add(make_shared<cone>(point3(0, 200, 300),V_cone, 75.0, interval(0.0, 200.0), cone3_material));
+
+    // ground
+
+    auto ground_material = make_shared<lambertian>(color(0.4, 0.4, 0.9));
+    world.add(make_shared<quad>(point3(-1000,0,0), vec3(2000,0,0), vec3(0,0,1000), ground_material));
+
+
+    // back wall
+
+    auto wall_material = make_shared<lambertian>(color(0.4, 0.4, 0.9));
+    world.add(make_shared<quad>(point3(-1000,0,1000), vec3(2000,0,0), vec3(0,1000,0), wall_material));
+
+    // camera
+
+    camera cam;
+
+    cam.aspect_ratio      = 1.0;
+    cam.image_width       = 400;
+    cam.samples_per_pixel = 650;
+    cam.max_depth         = 4;
+    cam.background        = color(0,0,0);
+
+    cam.vfov     = 40;
+    cam.lookfrom = point3(478, 278, -600);
+    cam.lookat   = point3(278, 278, 0);
+    cam.vup      = vec3(0,1,0);
+
+    cam.defocus_angle = 0;
+
+    cam.render(world); 
+}
+
 
 int main() {
-    switch (0) {
+    switch (10) {
         case 1:  bouncing_spheres();          break;
         case 2:  checkered_spheres();         break;
         case 3:  earth();                     break;
@@ -418,6 +481,7 @@ int main() {
         case 7:  cornell_box();               break;
         case 8:  cornell_smoke();             break;
         case 9:  final_scene(800, 10000, 40); break;
+        case 10: cone_test_scene();           break;
         default: final_scene(400,   250,  4); break;
     }
 }
