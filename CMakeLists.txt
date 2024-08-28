@@ -76,6 +76,13 @@ set ( SOURCE_REST_OF_YOUR_LIFE
   src/TheRestOfYourLife/sphere.h
   src/TheRestOfYourLife/texture.h
   src/TheRestOfYourLife/vec3.h
+  src/TheRestOfYourLife/cone.h
+)
+
+set ( BOUNDING_BOX_DEPENDENCIES 
+  src/dependencies/glm/glm.hpp
+  src/dependencies/glm/gtc/matrix_transform.hpp
+  # src/dependenciesglm/gtc/type_ptr.hpp
 )
 
 include_directories(src)
@@ -109,7 +116,7 @@ endif()
 
 # Executables
 add_executable(inOneWeekend      ${EXTERNAL} ${SOURCE_ONE_WEEKEND})
-add_executable(theNextWeek       ${EXTERNAL} ${SOURCE_NEXT_WEEK})
+add_executable(theNextWeek       ${EXTERNAL} ${SOURCE_NEXT_WEEK} ${BOUNDING_BOX_DEPENDENCIES})
 add_executable(theRestOfYourLife ${EXTERNAL} ${SOURCE_REST_OF_YOUR_LIFE})
 add_executable(cos_cubed         src/TheRestOfYourLife/cos_cubed.cc         )
 add_executable(cos_density       src/TheRestOfYourLife/cos_density.cc       )
